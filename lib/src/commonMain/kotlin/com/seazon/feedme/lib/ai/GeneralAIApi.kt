@@ -62,7 +62,7 @@ class GeneralAIApi {
             val requestBody = Text2TextRequest(
                 model = targetModel,
                 messages = listOf(Message(role = "user", content = userPrompt)),
-                max_tokens = config.maxTokens,
+                maxTokens = config.maxTokens,
                 temperature = 0.7
             )
             Json.encodeToString(requestBody).trimIndent()

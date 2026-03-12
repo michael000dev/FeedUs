@@ -34,15 +34,15 @@ data class AIGenerationConfig(
                 aiModel = AIModel.OpenAI,
                 apiUrl = "https://api.openai.com/v1/chat/completions",
                 modelList = listOf(
-                    "gpt-5.2-pro",
+                    "gpt-4.1-nano",
+                    "gpt-5-mini",
+                    "gpt-5.4",
                     "gpt-5.2",
                     "gpt-5",
-                    "gpt-5-mini",
                     "gpt-5-chat",
                     "gpt-5-nano",
                     "gpt-4.1",
                     "gpt-4.1-mini",
-                    "gpt-4.1-nano",
                 ),
                 apiKey = "",
                 maxTokens = 128000
@@ -58,13 +58,16 @@ data class AIGenerationConfig(
             // 阿里通义千问
             AIGenerationConfig(
                 aiModel = AIModel.QWen,
-                apiUrl = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation",
+                apiUrl = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+//                apiUrl = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions",
+//                apiUrl = "https://dashscope-us.aliyuncs.com/compatible-mode/v1/chat/completions",
                 modelList = listOf(
-                    "qwen-2-turbo",
-                    "qwen-2-plus",
-                    "qwen-2-max",
-                    "qwen-2-72b-instruct",
-                    "qwen-3-preview"
+                    "qwen-flash",
+                    "qwen3.5-plus",
+                    "qwen3.5-flash",
+                    "qwen3.5-27b",
+                    "qwen3-max",
+                    "qwen-plus",
                 ),
                 apiKey = "",
                 maxTokens = 200000
@@ -121,7 +124,12 @@ data class AIGenerationConfig(
             AIGenerationConfig(
                 aiModel = AIModel.Claude,
                 apiUrl = "https://api.anthropic.com/v1/messages",
-                modelList = listOf("claude-3-5-sonnet-20250129", "claude-3-opus-20250203", "claude-4-preview"),
+                modelList = listOf(
+                    "claude-3-5-haiku-latest",
+                    "claude-4-preview",
+                    "claude-3-5-sonnet-20250129",
+                    "claude-3-opus-20250203",
+                ),
                 apiKey = "",
                 maxTokens = 200000
             ),
@@ -139,8 +147,8 @@ data class AIGenerationConfig(
                     "glm-4.5-air",
                     "glm-4.5-airx",
                     "glm-4.5-flash",
+                    "glm-4-flashx-250414",
                     "glm-4-flash-250414",
-                    "glm-4-flashx-250414"
                 ),
                 apiKey = "",
                 maxTokens = 128000
