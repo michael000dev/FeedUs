@@ -6,8 +6,8 @@ enum class AIModel {
     GLM,
     QWen,
     OpenAI,
-    Claude,
     DeepSeek,
+    Claude,
     Ernie,
     Dream,
     Spark,
@@ -138,7 +138,13 @@ data class AIGenerationConfig(
             AIGenerationConfig(
                 aiModel = AIModel.DeepSeek,
                 apiUrl = "https://api.deepseek.com/v1/chat/completions",
-                modelList = listOf("deepseek-chat", "deepseek-r1", "deepseek-vl"),
+                modelList = listOf(
+                    "deepseek-chat",
+                    "deepseek-v3.2",
+                    "deepseek-v3.1",
+                    "deepseek-v3",
+                    "deepseek-r1",
+                ),
             ),
             // Custom
             AIGenerationConfig(
