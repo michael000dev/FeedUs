@@ -47,8 +47,20 @@ data class AIGenerationConfig(
             // 百度文心一言
             AIGenerationConfig(
                 aiModel = AIModel.Ernie,
-                apiUrl = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/%s/completions",
-                modelList = listOf("ernie-4.0-plus", "ernie-4.0-turbo-2026", "ernie-3.5-128k", "ernie-5.0-preview"),
+//                apiUrl = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions",
+                apiUrl = "https://qianfan.baidubce.com/v2/chat/completions",
+                modelList = listOf(
+                    "ernie-5.0-thinking-preview",
+                    "ernie-4.0-plus",
+                    "ernie-4.0-turbo-2026",
+                    "ernie-4.5-turbo-128k-preview",
+                    "ernie-4.5-turbo-32k",
+                    "ernie-4.5-turbo-128k",
+                    "ernie-4.5-0.3b",
+                    "ernie-4.5-21b-a3b",
+                    "ernie-4.5-vl-28b-a3b",
+                    "ernie-3.5-128k",
+                ),
             ),
             // 阿里通义千问
             AIGenerationConfig(
