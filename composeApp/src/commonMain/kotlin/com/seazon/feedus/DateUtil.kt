@@ -1,7 +1,14 @@
 package com.seazon.feedus
 
 import androidx.compose.runtime.Composable
-import feedus.composeapp.generated.resources.*
+import feedus.composeapp.generated.resources.Res
+import feedus.composeapp.generated.resources.item_time_1_day_ago
+import feedus.composeapp.generated.resources.item_time_1_hour_ago
+import feedus.composeapp.generated.resources.item_time_1_minute_ago
+import feedus.composeapp.generated.resources.item_time_just_now
+import feedus.composeapp.generated.resources.item_time_x_days_ago
+import feedus.composeapp.generated.resources.item_time_x_hours_ago
+import feedus.composeapp.generated.resources.item_time_x_minutes_ago
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.byUnicodePattern
@@ -48,4 +55,5 @@ object DateUtil {
         }
         return LocalDateTime.Format { byUnicodePattern("yyyy/MM/dd") }.format(d)
     }
+
 }

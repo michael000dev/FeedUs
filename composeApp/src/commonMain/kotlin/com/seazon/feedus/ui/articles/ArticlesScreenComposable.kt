@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.seazon.feedme.lib.rss.bo.Feed
 import com.seazon.feedme.lib.rss.bo.Item
+import com.seazon.feedme.lib.utils.DateUtil.toHMS
 import com.seazon.feedme.lib.utils.HtmlUtils
 import com.seazon.feedme.lib.utils.orZero
 import com.seazon.feedme.platform.TimeProvider
@@ -167,6 +168,7 @@ private fun Item(
     onItemClick: (item: Item) -> Unit,
     onToggleStar: (item: Item) -> Unit
 ) {
+    val descriptions = listOfNotNull(DateUtil.toXAgo(item.publishedDate.orZero()), item.duration?.toHMS())
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -216,12 +218,11 @@ private fun Item(
                 }
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = DateUtil.toXAgo(item.publishedDate.orZero()),
+                    text = descriptions.joinToString(separator = " · "),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.outline,
                 )
             }
-
         }
         if (!item.visual.isNullOrEmpty()) {
             Spacer(modifier = Modifier.width(8.dp))
@@ -245,6 +246,7 @@ fun ArticlesScreenPreview() {
             title = "[$it]this is title, it should be very very very very very very very very very very long",
             visual = "https://img.daofm.cn/wp-content/uploads/2020/09/Logo_Aroga-01.jpg",
             publishedDate = TimeProvider.currentTimeMillis(),
+            duration = 527,
         )
     }
     val feeds = listOf(

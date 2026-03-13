@@ -15,7 +15,8 @@ open class RssItem(
     var tags: String? = null, // sample 【,tag 1,tag 2,;tag 3,tag 4,】 // The tags in the front are new tags, and the tags in the server are behind them.
     var visual: String? = null,
     var podcastUrl: String? = null,
-    var podcastSize: Int = 0, // byte, supports up to 2G files, enough
+    var podcastSize: Long? = null, // byte, supports up to 2G files, enough
+    var duration: Long? = null, // second
     var feed: RssFeed? = RssFeed(),
     var enclosure: List<RssEnclosure>? = null,
     var isUnread: Boolean = false,

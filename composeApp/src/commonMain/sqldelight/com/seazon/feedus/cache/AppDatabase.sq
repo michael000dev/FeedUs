@@ -47,7 +47,10 @@ CREATE TABLE Item (
     publishedDate INTEGER,
     updatedDate INTEGER,
     description TEXT,
-    tags TEXT
+    tags TEXT,
+    podcastUrl TEXT,
+    podcastSize INTEGER,
+    duration INTEGER
 );
 
 insertItem:
@@ -67,9 +70,12 @@ INSERT INTO Item(
     publishedDate,
     updatedDate,
     description,
-    tags
+    tags,
+    podcastUrl,
+    podcastSize,
+    duration
 )
-VALUES(?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?);
+VALUES(?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 updateFlag:
 UPDATE Item

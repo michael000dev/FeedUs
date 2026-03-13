@@ -35,4 +35,19 @@ object DateUtil {
             localDateTime.second
         )
     }
+
+    fun Long.toHMS(): String {
+        val hours = this / 3600
+        val minutes = (this % 3600) / 60
+        val secs = this % 60
+        return if (hours > 0) {
+            "%02d:%02d:%02d".format(hours, minutes, secs)
+        } else {
+            "%02d:%02d".format(minutes, secs)
+        }
+    }
+
+    fun Int.toHMS(): String {
+        return this.toLong().toHMS()
+    }
 }

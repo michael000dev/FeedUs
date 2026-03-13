@@ -164,6 +164,9 @@ class ArticlesViewModel(
             updatedDate = it.updateddate,
             description = it.description,
             tags = it.tags,
+            podcastUrl = it.podcastUrl,
+            podcastSize = it.podcastSize,
+            duration = it.duration,
         )
     }
 

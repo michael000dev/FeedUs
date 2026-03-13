@@ -177,6 +177,9 @@ internal class Database(sqlDriver: SqlDriver) {
         updatedDate: Long?,
         description: String?,
         tags: String?,
+        podcastUrl: String?,
+        podcastSize: Long?,
+        duration: Long?,
     ): Item {
         return Item(
             id = id,
@@ -195,6 +198,9 @@ internal class Database(sqlDriver: SqlDriver) {
             updatedDate = updatedDate,
             description = description,
             tags = tags,
+            podcastUrl = podcastUrl,
+            podcastSize = podcastSize,
+            duration = duration,
         )
     }
 
@@ -219,6 +225,9 @@ internal class Database(sqlDriver: SqlDriver) {
                     updatedDate = item.updatedDate,
                     description = item.description,
                     tags = item.tags,
+                    podcastUrl = item.podcastUrl,
+                    podcastSize = item.podcastSize?.toLong(),
+                    duration = item.duration?.toLong(),
                 )
             }
         }

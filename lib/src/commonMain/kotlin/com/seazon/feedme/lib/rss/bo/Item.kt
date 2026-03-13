@@ -22,6 +22,9 @@ data class Item(
     // sample 【,tag 1,tag 2,;tag 3,tag 4,】
     // The tags in the front are new tags, and the tags in the server are behind them.
     val tags: String? = null,
+    val podcastUrl: String? = null,
+    val podcastSize: Long? = null, // byte, supports up to 2G files, enough
+    val duration: Long? = null, // second
 ) {
     companion object {
         const val FLAG_UNREAD = 2

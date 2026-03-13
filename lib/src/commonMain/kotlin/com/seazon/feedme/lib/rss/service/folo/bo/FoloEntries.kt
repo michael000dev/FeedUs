@@ -2,7 +2,6 @@ package com.seazon.feedme.lib.rss.service.folo.bo
 
 import com.seazon.feedme.lib.rss.bo.RssItem
 import com.seazon.feedme.lib.utils.DateUtil
-import com.seazon.feedme.lib.utils.orZero
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -41,6 +40,7 @@ data class FoloEntry(
 ) {
     fun convert(feed: FoloFeed?, category: FoloCategory?, read: Boolean?, collections: FoloCollection?): RssItem {
         val audioAttachment = attachments?.firstOrNull { it.mimeType?.startsWith("audio") == true }
+        val duration = attachments?.firstOrNull { it.durationInSeconds != null }?.durationInSeconds
         return RssItem(
             id = id,
             fid = feed?.id.orEmpty(),
@@ -56,7 +56,8 @@ data class FoloEntry(
             isUnread = !(read ?: false),
             isStar = collections != null,
             podcastUrl = audioAttachment?.url,
-            podcastSize = audioAttachment?.sizeInBytes?.toInt().orZero()
+            podcastSize = audioAttachment?.sizeInBytes?.toLong(),
+            duration = duration?.toLong(),
         )
     }
 }
@@ -68,6 +69,8 @@ data class FoloAttachment(
     val mimeType: String? = null,
     @SerialName("size_in_bytes")
     val sizeInBytes: String? = null,
+    @SerialName("duration_in_seconds")
+    val durationInSeconds: Int? = null,
 )
 
 @Serializable

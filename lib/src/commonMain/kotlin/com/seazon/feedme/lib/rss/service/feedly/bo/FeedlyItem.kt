@@ -43,11 +43,11 @@ class FeedlyItem : Entity() {
         }
         rssItem.description = content?.content ?: summary?.content.orEmpty()
         var audioUrl: String? = null
-        var audioSize = 0
+        var audioSize = 0L
         rssItem.enclosure = enclosure?.map {
             if (audioUrl == null && it.type != null && (it.type!!.startsWith("audio/") || it.type!!.startsWith("text/"))) {
                 audioUrl = it.href
-                audioSize = it.length.toInt()
+                audioSize = it.length
             }
             RssEnclosure(
                 href = it.href,
