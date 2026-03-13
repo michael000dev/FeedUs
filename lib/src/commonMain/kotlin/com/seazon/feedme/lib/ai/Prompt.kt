@@ -1,7 +1,8 @@
 package com.seazon.feedme.lib.ai
 
 enum class PromptType {
-    Summary, Translate
+    Translate,
+    Summary,
 }
 
 data class Prompt(
@@ -10,15 +11,6 @@ data class Prompt(
 ) {
     companion object {
         val configs = arrayOf(
-            Prompt(
-                PromptType.Summary,
-                """
-Summarize the article in {language} within 200 words.
-Keep it concise and complete.
-Use markdown to improve readability if need.
-Output only the result directly, no extra explanations.
-Article: {content}""".trimIndent()
-            ),
             Prompt(
                 PromptType.Translate,
                 """
@@ -29,6 +21,15 @@ Do not add extra explanations or comments.
 Preserve formatting, paragraphs, and key terms.
 Output only the translated result.
 Text to translate: {content}""".trimMargin()
+            ),
+            Prompt(
+                PromptType.Summary,
+                """
+Summarize the article in {language} within 200 words.
+Keep it concise and complete.
+Use markdown to improve readability if need.
+Output only the result directly, no extra explanations.
+Article: {content}""".trimIndent()
             ),
         )
     }
