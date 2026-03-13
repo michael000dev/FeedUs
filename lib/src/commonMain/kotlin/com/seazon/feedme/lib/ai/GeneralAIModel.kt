@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 data class Text2TextRequest(
     val model: String,
     val messages: List<Message>,
-    val maxTokens: Int = 2000,
 )
 
 @Serializable
