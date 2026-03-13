@@ -7,7 +7,6 @@ data class Text2TextRequest(
     val model: String,
     val messages: List<Message>,
     val maxTokens: Int = 2000,
-    val temperature: Double = 0.7 // Generate randomness (0-1, the higher the value, the more random)
 )
 
 @Serializable

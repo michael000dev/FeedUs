@@ -63,7 +63,6 @@ class GeneralAIApi {
                 model = targetModel,
                 messages = listOf(Message(role = "user", content = userPrompt)),
                 maxTokens = config.maxTokens,
-                temperature = 0.7
             )
             Json.encodeToString(requestBody).trimIndent()
         }

@@ -4,11 +4,11 @@ enum class AIModel {
     Gemini,
     Volces,
     GLM,
+    QWen,
+    OpenAI,
     Claude,
     DeepSeek,
-    OpenAI,
     Ernie,
-    QWen,
     Dream,
     Spark,
     Custom,
@@ -18,7 +18,7 @@ data class AIGenerationConfig(
     val aiModel: AIModel,
     val apiUrl: String,
     val modelList: List<String>,
-    val apiKey: String,
+    val apiKey: String = "",
     val timeout: Long = 30000,
     val maxTokens: Int = 4096,
     val urlEditable: Boolean = false,
@@ -44,7 +44,6 @@ data class AIGenerationConfig(
                     "gpt-4.1",
                     "gpt-4.1-mini",
                 ),
-                apiKey = "",
                 maxTokens = 128000
             ),
             // 百度文心一言
@@ -52,7 +51,6 @@ data class AIGenerationConfig(
                 aiModel = AIModel.Ernie,
                 apiUrl = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/%s/completions",
                 modelList = listOf("ernie-4.0-plus", "ernie-4.0-turbo-2026", "ernie-3.5-128k", "ernie-5.0-preview"),
-                apiKey = "",
                 maxTokens = 128000
             ),
             // 阿里通义千问
@@ -69,7 +67,6 @@ data class AIGenerationConfig(
                     "qwen3-max",
                     "qwen-plus",
                 ),
-                apiKey = "",
                 maxTokens = 200000
             ),
             // 字节即梦AI
@@ -77,7 +74,6 @@ data class AIGenerationConfig(
                 aiModel = AIModel.Dream,
                 apiUrl = "https://dreamai.bytedance.com/api/v1/chat/%s/completions",
                 modelList = listOf("dream-text-v2", "dream-text-pro-2026", "doubao-4.0", "doubao-longcontext"),
-                apiKey = "",
                 maxTokens = 8192
             ),
             // 火山方舟
@@ -93,7 +89,6 @@ data class AIGenerationConfig(
                     "doubao-seed-1-6-lite-251015",
                     "doubao-seed-1-6-flash-250828",
                 ),
-                apiKey = "",
                 maxTokens = 8192
             ),
             // 讯飞星火
@@ -101,7 +96,6 @@ data class AIGenerationConfig(
                 aiModel = AIModel.Spark,
                 apiUrl = "https://spark-api.xf-yun.com/v4/chat/completions",
                 modelList = listOf("spark-4.0", "spark-4.0-turbo", "spark-5.0-preview", "spark-4.0-long"),
-                apiKey = "",
                 maxTokens = 128000
             ),
             // Google Gemini
@@ -117,7 +111,6 @@ data class AIGenerationConfig(
                     "gemini-2.5-pro",
                     "gemini-2.5-flash",
                 ),
-                apiKey = "",
                 maxTokens = 1048576
             ),
             // Anthropic Claude
@@ -130,7 +123,6 @@ data class AIGenerationConfig(
                     "claude-3-5-sonnet-20250129",
                     "claude-3-opus-20250203",
                 ),
-                apiKey = "",
                 maxTokens = 200000
             ),
             // GLM
@@ -150,7 +142,6 @@ data class AIGenerationConfig(
                     "glm-4-flashx-250414",
                     "glm-4-flash-250414",
                 ),
-                apiKey = "",
                 maxTokens = 128000
             ),
             // DeepSeek
@@ -158,15 +149,13 @@ data class AIGenerationConfig(
                 aiModel = AIModel.DeepSeek,
                 apiUrl = "https://api.deepseek.com/v1/chat/completions",
                 modelList = listOf("deepseek-chat", "deepseek-r1", "deepseek-vl"),
-                apiKey = "",
                 maxTokens = 128000
             ),
             // Custom
             AIGenerationConfig(
                 aiModel = AIModel.Custom,
                 apiUrl = "",
-                modelList = emptyList<String>(),
-                apiKey = "",
+                modelList = emptyList(),
                 maxTokens = 128000,
                 urlEditable = true,
             ),
