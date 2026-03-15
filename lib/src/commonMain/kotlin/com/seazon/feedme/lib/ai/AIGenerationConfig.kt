@@ -7,6 +7,7 @@ enum class AIModel {
     QWen,
     OpenAI,
     DeepSeek,
+    MiniMax,
     Claude,
     Ernie,
     Dream,
@@ -75,6 +76,20 @@ data class AIGenerationConfig(
                     "qwen3.5-27b",
                     "qwen3-max",
                     "qwen-plus",
+                ),
+            ),
+            // MiniMax
+            // https://platform.minimax.io/docs/guides/models-intro
+            AIGenerationConfig(
+                aiModel = AIModel.MiniMax,
+                apiUrl = "https://api.minimax.io/v1/text/chatcompletion_v2",
+                modelList = listOf(
+                    "MiniMax-M2.5",
+                    "MiniMax-M2.5-highspeed",
+                    "MiniMax-M2.1",
+                    "MiniMax-M2.1-highspeed",
+                    "MiniMax-M2",
+                    "M2-her",
                 ),
             ),
             // 字节即梦AI
