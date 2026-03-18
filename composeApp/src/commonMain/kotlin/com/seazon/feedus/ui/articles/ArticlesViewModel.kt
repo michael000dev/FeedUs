@@ -119,11 +119,9 @@ class ArticlesViewModel(
                 } else {
                     api.getUnraedStream(api.getFetchCnt(), null, state.value.continuation)
                 }
+                val newContinuation = rssStream?.continuation
                 if (rssStream?.items.isNullOrEmpty() && !rssStream?.ids.isNullOrEmpty()) {
                     rssStream = api.getStreamByIds(rssStream.ids.take(api.getFetchCnt()).toTypedArray())
-                }
-                if (rssStream?.items.isNullOrEmpty() && !rssStream?.ids.isNullOrEmpty()) {
-                    rssStream = api.getStreamByIds(rssStream.ids.toTypedArray())
                 }
                 val items = rssStream?.items?.map { convert(it) }.orEmpty()
                 val feedMap = rssDatabase.getFeeds().associateBy { it.id }
@@ -134,7 +132,7 @@ class ArticlesViewModel(
                         hasMore = api.supportPagingFetchIds() && hasMore,
                         items = it.items + items,
                         feedMap = feedMap,
-                        continuation = rssStream?.continuation,
+                        continuation = newContinuation ?: rssStream?.continuation,
                     )
                 }
             } catch (e: Exception) {
