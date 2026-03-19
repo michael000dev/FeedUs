@@ -5,18 +5,7 @@ import com.seazon.feedme.lib.rss.bo.RssFeed
 import com.seazon.feedme.lib.rss.bo.RssStream
 import com.seazon.feedme.lib.rss.service.feedbin.bo.FeedbinStream
 import com.seazon.feedme.lib.rss.service.feedbin.bo.FeedbinSubscription
-import com.seazon.feedme.lib.rss.service.gr.bo.GrStream
 import com.seazon.feedme.lib.rss.service.ttrss.bo.TtrssStream
-
-fun GrStream.convert(): RssStream {
-    return RssStream(
-        continuation,
-        items?.map { it.convert() } ?: ArrayList(),
-        itemRefs?.map {
-            convertToLongForm(it.id.orEmpty())
-        }.orEmpty()
-    )
-}
 
 fun TtrssStream.convert(): RssStream {
     return RssStream(
