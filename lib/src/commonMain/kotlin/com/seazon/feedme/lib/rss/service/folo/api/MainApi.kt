@@ -30,7 +30,12 @@ class MainApi(token: RssToken) : AuthedApi(token) {
                 title = if (it.title.isNullOrEmpty()) it.feeds?.title else it.title,
                 url = it.feeds?.siteUrl,
                 feedUrl = it.feeds?.url,
-                categories = listOfNotNull(if (it.category.isNullOrEmpty()) null else RssCategory(it.category, it.category)),
+                categories = listOfNotNull(
+                    if (it.category.isNullOrEmpty()) null else RssCategory(
+                        it.category,
+                        it.category
+                    )
+                ),
                 favicon = it.feeds?.image,
             )
         }
@@ -73,8 +78,8 @@ class MainApi(token: RssToken) : AuthedApi(token) {
     ): RssStream? {
         val o = jsonOf(
             "read" to false,
-//                "view" to 0, // if view is not right, won't return data
-            "withContent" to true,
+//            "view" to 0, // if view is not right, won't return data
+//            "withContent" to true, // with this field, won't return entries
             "limit" to limit,
             *array,
             *if (!publishedAfter.isNullOrEmpty()) arrayOf("publishedAfter" to publishedAfter) else emptyArray()
