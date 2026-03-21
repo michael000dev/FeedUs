@@ -38,7 +38,12 @@ data class FoloEntry(
     val media: List<FoloMedia>? = null,
     val attachments: List<FoloAttachment>? = null,
 ) {
-    fun convert(feed: FoloFeed?, category: FoloCategory?, read: Boolean?, collections: FoloCollection?): RssItem {
+    fun convert(
+        feed: FoloFeed? = null,
+        category: FoloCategory? = null,
+        read: Boolean? = null,
+        collections: FoloCollection? = null,
+    ): RssItem {
         val audioAttachment = attachments?.firstOrNull { it.mimeType?.startsWith("audio") == true }
         val duration = attachments?.firstOrNull { it.durationInSeconds != null }?.durationInSeconds
         return RssItem(

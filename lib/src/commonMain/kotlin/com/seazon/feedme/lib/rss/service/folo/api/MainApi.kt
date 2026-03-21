@@ -4,6 +4,7 @@ import com.seazon.feedme.lib.network.HttpMethod
 import com.seazon.feedme.lib.network.NameValuePair
 import com.seazon.feedme.lib.rss.bo.RssCategory
 import com.seazon.feedme.lib.rss.bo.RssFeed
+import com.seazon.feedme.lib.rss.bo.RssItem
 import com.seazon.feedme.lib.rss.bo.RssStream
 import com.seazon.feedme.lib.rss.bo.RssToken
 import com.seazon.feedme.lib.rss.bo.RssUnreadCount
@@ -11,6 +12,7 @@ import com.seazon.feedme.lib.rss.bo.RssUnreadCounts
 import com.seazon.feedme.lib.rss.service.folo.FoloConstants
 import com.seazon.feedme.lib.rss.service.folo.bo.FoloData
 import com.seazon.feedme.lib.rss.service.folo.bo.FoloEntries
+import com.seazon.feedme.lib.rss.service.folo.bo.FoloEntry
 import com.seazon.feedme.lib.rss.service.folo.bo.FoloFeeds
 import com.seazon.feedme.lib.rss.service.folo.bo.FoloListData
 import com.seazon.feedme.lib.rss.service.folo.bo.FoloSubscribeResponse
@@ -59,27 +61,28 @@ class MainApi(token: RssToken) : AuthedApi(token) {
     }
 
     suspend fun getEntriesForCollection(limit: Int, publishedAfter: String?): RssStream? {
-        return getEntries(limit, publishedAfter, arrayOf("isCollection" to true))
+        return getEntries(limit, publishedAfter, false, arrayOf("isCollection" to true))
     }
 
     suspend fun getEntriesForFeed(feedId: String, limit: Int, publishedAfter: String?): RssStream? {
-        return getEntries(limit, publishedAfter, arrayOf("feedId" to feedId))
+        return getEntries(limit, publishedAfter, true, arrayOf("feedId" to feedId))
     }
 
     suspend fun getEntriesForCategory(category: String, limit: Int, publishedAfter: String?): RssStream? {
         val feedIds = toJson<Array<String>>(category)
-        return getEntries(limit, publishedAfter, arrayOf("feedIdList" to feedIds))
+        return getEntries(limit, publishedAfter, true, arrayOf("feedIdList" to feedIds))
     }
 
     private suspend fun getEntries(
         limit: Int,
         publishedAfter: String?,
+        withContent: Boolean = true,
         array: Array<Pair<String, Any?>> = emptyArray()
     ): RssStream? {
         val o = jsonOf(
             "read" to false,
 //            "view" to 0, // if view is not right, won't return data
-//            "withContent" to true, // with this field, won't return entries
+            "withContent" to withContent, // with this field, collection case won't return entries
             "limit" to limit,
             *array,
             *if (!publishedAfter.isNullOrEmpty()) arrayOf("publishedAfter" to publishedAfter) else emptyArray()
@@ -93,10 +96,44 @@ class MainApi(token: RssToken) : AuthedApi(token) {
         val items = data.data.mapNotNull { entries ->
             entries.convert()
         }
+        val newItems = if (withContent) {
+            items
+        } else {
+            // get content from stream api and then set to items
+            val ids = items.mapNotNull { it.id }
+            val itemsWithContent = getStream(ids.toTypedArray())
+            val itemMap = itemsWithContent.associateBy { it.id }
+            items.map {
+                it.apply {
+                    this.description = itemMap[it.id]?.description
+                }
+            }
+        }
         return RssStream(
-            items = items,
+            items = newItems,
             continuation = data.data.lastOrNull()?.entries?.publishedAt
         )
+    }
+
+    suspend fun getStream(ids: Array<String>): List<RssItem> {
+        val o = jsonOf("ids" to ids)
+        val data = execute(
+            httpMethod = HttpMethod.POST,
+            url = FoloConstants.URL_STREAM,
+            body = o.toString()
+        ).body
+        val items = data.split("\n").mapNotNull {
+            if (it.isEmpty()) {
+                null
+            } else {
+                try {
+                    toJson<FoloEntry>(it.trim()).convert()
+                } catch (_: Exception) {
+                    null
+                }
+            }
+        }
+        return items
     }
 
     suspend fun getUnreadCounts(): RssUnreadCounts? {
