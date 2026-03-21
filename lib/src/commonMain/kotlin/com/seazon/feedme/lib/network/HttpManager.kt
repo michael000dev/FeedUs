@@ -6,19 +6,26 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.header
 import io.ktor.client.request.headers
+import io.ktor.client.request.prepareGet
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Parameters
 import io.ktor.serialization.kotlinx.json.json
-//import io.ktor.utils.io.jvm.javaio.toInputStream
+import io.ktor.utils.io.ByteReadChannel
+import io.ktor.utils.io.readAvailable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.io.buffered
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.json.Json
-//import java.io.InputStream
-//import java.net.InetSocketAddress
-//import java.net.Proxy
 
 class HttpManager {
 
@@ -227,40 +234,45 @@ class HttpManager {
             }
         }
 
-//        suspend fun saveImage(
-//            url: String,
-//            path: String,
-//            filename: String,
-//            useContentType: Boolean,
-//            ignoreSmallIcon: Boolean,
-//            onSaveImage: (uriString: String, inputStream: InputStream) -> Unit,
-//        ): String {
-//            val response = client.get(url)
-//            if (response.status.value != 200) {
-//                throw SyncIgnoreException("Request failed, code:" + response.status.value)
-//            }
-//
-//            val inputStream = response.bodyAsChannel().toInputStream()
-//            if (ignoreSmallIcon) {
-//                val size = response.contentLength()
-//                if (size != -1L && size < 128) {
-//                    throw SyncIgnoreException("Image is too small, lenght:$size")
-//                }
-//                if (size > IMAGE_MAX_SIZE) {
-//                    throw SyncIgnoreException("Image is too large, lenght:$size")
-//                }
-//            }
-//
-//            var filename2 = filename
-//            if (useContentType) {
-//                response.imageType()?.let {
-//                    filename2 += ".$EXT_SVG"
-//                }
-//            }
-//
-//            onSaveImage(path + filename, inputStream)
-//            LogUtils.debug("response, code:" + response.status.value)
-//            return filename
-//        }
+        suspend fun saveFile(url: String, savePath: String) = withContext(Dispatchers.IO) {
+            try {
+                val path = Path(savePath)
+                client.prepareGet(url).execute { response ->
+                    when (response.status.value) {
+                        200 -> writeChannelToFile(response.bodyAsChannel(), path)
+                        403 -> downloadWithReferer(url, path)
+                        else -> throw SyncIgnoreException("Request failed, code: ${response.status.value}")
+                    }
+                }
+            } catch (e: Exception) {
+                throw SyncIgnoreException("Request failed, error:${e.message}")
+            }
+        }
+
+        private suspend fun writeChannelToFile(channel: ByteReadChannel, path: Path) {
+            SystemFileSystem.sink(path).buffered().use { sink ->
+                val buffer = ByteArray(8192)
+                while (!channel.isClosedForRead) {
+                    val size = channel.readAvailable(buffer)
+                    if (size > 0) {
+                        sink.write(buffer, 0, size)
+                    }
+                }
+                sink.flush()
+                sink.close()
+            }
+        }
+
+        private suspend fun downloadWithReferer(url: String, path: Path) {
+            client.prepareGet(url) {
+                header("Referer", "no-referer")
+            }.execute { response ->
+                if (response.status.value == 200) {
+                    writeChannelToFile(response.bodyAsChannel(), path)
+                } else {
+                    throw IllegalStateException("Request failed for 403 case, code: ${response.status.value}")
+                }
+            }
+        }
     }
 }
