@@ -41,12 +41,7 @@ class GeneralAIApi {
         targetModel: String,
         userPrompt: String
     ): SimpleResponse {
-        if (config.aiModel != AIModel.Custom && !config.modelList.contains(targetModel)) {
-            throw IllegalArgumentException("model $targetModel not exist in ${config.aiModel}'s support list")
-        }
-
         val realApiUrl = config.apiUrl.format(targetModel)
-
         val body = if (config.aiModel == AIModel.Gemini) {
             val requestBody = RequestBody(
                 listOf(
