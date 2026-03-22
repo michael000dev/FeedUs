@@ -3,7 +3,7 @@ package com.seazon.feedme.lib.ai
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Text2TextRequest(
+data class GeneralAIRequest(
     val model: String,
     val messages: List<Message>,
 )
@@ -15,7 +15,7 @@ data class Message(
 )
 
 @Serializable
-data class Text2TextResponse(
+data class GeneralAIResponse(
     val id: String? = null,
     val choices: List<Choice>? = null,
     val error: ErrorInfo? = null

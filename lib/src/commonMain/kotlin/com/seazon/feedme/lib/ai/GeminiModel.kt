@@ -3,12 +3,12 @@ package com.seazon.feedme.lib.ai
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RequestBody(
+data class GeminiRequest(
     val contents: List<Content>? = null,
 )
 
 @Serializable
-data class Result(
+data class GeminiResponse(
     val candidates: List<Candidates>? = null,
     val error: Error? = null,
 ) {

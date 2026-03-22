@@ -24,7 +24,7 @@ class GeneralAIApi {
             .replace("{language}", language)
         try {
             val response = generateText(selectedConfig, targetModel, userPrompt)
-            val generatedText = extractGeneratedText2(response, aiModel)
+            val generatedText = extractGeneratedText(response, aiModel)
             println("result：$generatedText")
             return generatedText.orEmpty()
         } catch (e: AiException) {
@@ -42,24 +42,17 @@ class GeneralAIApi {
         userPrompt: String
     ): SimpleResponse {
         val realApiUrl = config.apiUrl.format(targetModel)
-        val body = if (config.aiModel == AIModel.Gemini) {
-            val requestBody = RequestBody(
-                listOf(
-                    Content(
-                        listOf(
-                            Part(userPrompt),
-                        ),
-                    ),
-                ),
+        val requestBody = if (config.aiModel == AIModel.Gemini) {
+            GeminiRequest(
+                contents = listOf(Content(parts = listOf(Part(text = userPrompt)))),
             )
-            Json.encodeToString(requestBody).trimIndent()
         } else {
-            val requestBody = Text2TextRequest(
+            GeneralAIRequest(
                 model = targetModel,
                 messages = listOf(Message(role = "user", content = userPrompt)),
             )
-            Json.encodeToString(requestBody).trimIndent()
         }
+        val body = Json.encodeToString(requestBody).trimIndent()
         val response = HttpManager.requestWrap(
             httpMethod = HttpMethod.POST,
             url = realApiUrl,
@@ -79,21 +72,21 @@ class GeneralAIApi {
         return response
     }
 
-    private fun extractGeneratedText2(response: SimpleResponse, aiModel: AIModel): String? {
+    private fun extractGeneratedText(response: SimpleResponse, aiModel: AIModel): String? {
         when (aiModel) {
             AIModel.Gemini -> {
-                val result: Result = response.convertBody()
-                return extractGeneratedText(result)
+                val result: GeminiResponse = response.convertBody()
+                return extractGeneratedTextInner(result)
             }
 
             else -> {
-                val result: Text2TextResponse = response.convertBody()
-                return extractGeneratedText(result)
+                val result: GeneralAIResponse = response.convertBody()
+                return extractGeneratedTextInner(result)
             }
         }
     }
 
-    private fun extractGeneratedText(response: Text2TextResponse): String? {
+    private fun extractGeneratedTextInner(response: GeneralAIResponse): String? {
         return when {
             response.error != null -> throw AiException(message = "code: ${response.error.code}, message: ${response.error.message}")
             response.choices.isNullOrEmpty() -> null
@@ -101,7 +94,7 @@ class GeneralAIApi {
         }
     }
 
-    private fun extractGeneratedText(response: Result?): String? {
+    private fun extractGeneratedTextInner(response: GeminiResponse?): String? {
         return when {
             response?.error != null -> throw AiException(message = "code: ${response.error.code}, message: ${response.error.message}")
             response?.candidates.isNullOrEmpty() -> null
