@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AIViewModel() : BaseViewModel() {
+class AIViewModel : BaseViewModel() {
 
     private val _state = MutableStateFlow(AIScreenState())
     val state: StateFlow<AIScreenState> = _state
@@ -25,7 +25,43 @@ class AIViewModel() : BaseViewModel() {
         }
         viewModelScope.launch {
             try {
-                val text = GeneralAIApi().text2Text(type, baseUrl, key, model, prompt, query, lang)
+                val text = GeneralAIApi().text2Text(type, baseUrl, key, model, prompt, "", "")
+                debug("text: $text")
+                _state.update {
+                    it.copy(
+                        loading = false,
+                        output = text,
+                    )
+                }
+            } catch (e: AiException) {
+                e.printStackTrace()
+                _state.update {
+                    it.copy(
+                        loading = false,
+                        output = e.message,
+                    )
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _state.update {
+                    it.copy(
+                        loading = false,
+                    )
+                }
+            }
+        }
+    }
+
+    fun test(type: AIModel, baseUrl: String, key: String, model: String) {
+        _state.update {
+            it.copy(
+                loading = true,
+                output = null,
+            )
+        }
+        viewModelScope.launch {
+            try {
+                val text = GeneralAIApi().test(type, baseUrl, key, model)
                 debug("text: $text")
                 _state.update {
                     it.copy(

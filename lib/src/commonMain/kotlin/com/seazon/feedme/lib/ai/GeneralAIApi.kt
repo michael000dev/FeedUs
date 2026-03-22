@@ -42,17 +42,18 @@ class GeneralAIApi {
         userPrompt: String
     ): SimpleResponse {
         val realApiUrl = config.apiUrl.format(targetModel)
-        val requestBody = if (config.aiModel == AIModel.Gemini) {
-            GeminiRequest(
+        val body = if (config.aiModel == AIModel.Gemini) {
+            val requestBody = GeminiRequest(
                 contents = listOf(Content(parts = listOf(Part(text = userPrompt)))),
             )
+            Json.encodeToString(requestBody).trimIndent()
         } else {
-            GeneralAIRequest(
+            val requestBody = GeneralAIRequest(
                 model = targetModel,
                 messages = listOf(Message(role = "user", content = userPrompt)),
             )
+            Json.encodeToString(requestBody).trimIndent()
         }
-        val body = Json.encodeToString(requestBody).trimIndent()
         val response = HttpManager.requestWrap(
             httpMethod = HttpMethod.POST,
             url = realApiUrl,
@@ -100,5 +101,14 @@ class GeneralAIApi {
             response?.candidates.isNullOrEmpty() -> null
             else -> response.candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text
         }
+    }
+
+    suspend fun test(
+        aiModel: AIModel,
+        baseUrl: String,
+        key: String,
+        targetModel: String,
+    ): String? {
+        return GeneralAIApi().text2Text(aiModel, baseUrl, key, targetModel, "just return `test pass`", "", "")
     }
 }

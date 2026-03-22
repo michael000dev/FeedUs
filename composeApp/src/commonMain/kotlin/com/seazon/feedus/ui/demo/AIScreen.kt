@@ -12,6 +12,9 @@ fun AIScreen() {
         stateFlow = viewModel.state,
         query = { type, baseUrl, key, model, query, prompt ->
             viewModel.query(type, baseUrl, key, model, query, platform.language, prompt)
-        }
+        },
+        test = { type, baseUrl, key, model ->
+            viewModel.test(type, baseUrl, key, model)
+        },
     )
 }

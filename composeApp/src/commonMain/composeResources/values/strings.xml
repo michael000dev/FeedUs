@@ -80,6 +80,7 @@
     <string name="ai_prompt">Prompt</string>
     <string name="ai_app_id">AppID</string>
     <string name="ai_query">Query</string>
+    <string name="ai_test">Test</string>
 
     <string name="category_category">Expand or collapse category</string>
     <string name="category_feed">Feed icon</string>

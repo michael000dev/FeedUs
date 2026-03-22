@@ -3,7 +3,6 @@ package com.seazon.feedus.ui.demo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,11 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +45,7 @@ import feedus.composeapp.generated.resources.ai_key
 import feedus.composeapp.generated.resources.ai_model
 import feedus.composeapp.generated.resources.ai_prompt
 import feedus.composeapp.generated.resources.ai_query
+import feedus.composeapp.generated.resources.ai_test
 import feedus.composeapp.generated.resources.ai_title
 import feedus.composeapp.generated.resources.ai_type
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +57,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun AIScreenComposable(
     stateFlow: StateFlow<AIScreenState>,
     query: (type: AIModel, baseUrl: String, key: String, model: String, query: String, prompt: String) -> Unit,
+    test: (type: AIModel, baseUrl: String, key: String, model: String) -> Unit,
 ) {
     val state by stateFlow.collectAsState()
     val typeList = AIModel.entries.toTypedArray()
@@ -338,37 +337,35 @@ fun AIScreenComposable(
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        if (state.loading) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .background(MaterialTheme.colorScheme.primary, CircleShape),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(16.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.onPrimary,
+        FmPrimaryButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(Res.string.ai_test),
+            isLoading = state.loading,
+            onClick = {
+                test(
+                    typeValue,
+                    baseUrlValue,
+                    keyValue,
+                    modelValue,
                 )
             }
-        } else {
-            FmPrimaryButton(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.ai_query),
-                onClick = {
-                    query(
-                        typeValue,
-                        baseUrlValue,
-                        keyValue,
-                        modelValue,
-                        queryValue,
-                        promptValue.content,
-                    )
-                }
-            )
-        }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        FmPrimaryButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(Res.string.ai_query),
+            isLoading = state.loading,
+            onClick = {
+                query(
+                    typeValue,
+                    baseUrlValue,
+                    keyValue,
+                    modelValue,
+                    queryValue,
+                    promptValue.content,
+                )
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = state.output.orEmpty(),
@@ -382,5 +379,9 @@ fun AIScreenComposable(
 @Composable
 fun AIScreenComposablePreview() {
     val stateFlow = MutableStateFlow(AIScreenState(false, "this is output"))
-    AIScreenComposable(stateFlow = stateFlow, query = { type, baseUrl, key, model, query, prompt -> })
+    AIScreenComposable(
+        stateFlow = stateFlow,
+        query = { type, baseUrl, key, model, query, prompt -> },
+        test = { type, baseUrl, key, model -> },
+    )
 }
