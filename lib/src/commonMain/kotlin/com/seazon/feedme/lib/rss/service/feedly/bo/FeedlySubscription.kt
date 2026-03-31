@@ -34,19 +34,6 @@ class FeedlySubscription : Entity() {
         } ?: ArrayList()
         return feed
     }
-
-//    companion object {
-//        @JvmStatic
-//        @Throws(JSONException::class)
-//        fun parseList(json: String): List<RssFeed> {
-//            return try {
-//                val subscriptions: List<FeedlySubscription> = Gson().fromJson(json, object : TypeToken<List<FeedlySubscription>>() {}.type)
-//                subscriptions.convert()
-//            } catch (e: Exception) {
-//                throw wrapException(json, e)
-//            }
-//        }
-//    }
 }
 
 fun Collection<FeedlySubscription>.convert(): List<RssFeed> = map {
@@ -55,20 +42,9 @@ fun Collection<FeedlySubscription>.convert(): List<RssFeed> = map {
 
 fun Collection<FeedlyTag>.convert2(): List<RssTag> = map {
     RssTag(
-        it.id,
-        it.label ?: (it.id?.substring(it.id?.lastIndexOf("/") ?: 0 + 1))
+        id = it.id,
+        label = it.label ?: it.parseLabelFromId()
     )
 }.filter {
     !FeedlyConstants.isIgnoredTag(it.label) && !FeedlyConstants.isIgnoredForTag(it.label)
 }
-
-//data class SubscriptionUpdateRequest(
-//    val id: String,
-//    val title: String,
-//    val categories: List<Category>?,
-//)
-
-//data class Category(
-//    val id: String,
-//    val label: String,
-//)
