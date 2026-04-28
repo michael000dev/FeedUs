@@ -23,6 +23,32 @@ FeedUs contains code that is open sourced from [FeedMe](https://github.com/seazo
 
 <img width="250" alt="ui-Linux-login" src="./docs/imgs/linux-login.png" /><img width="250" alt="ui-Linux-feeds" src="./docs/imgs/linux-feeds.png" />
 
+## Release
+
+The GitHub Actions workflow (`.github/workflows/build-release.yml`) automatically builds, signs, and publishes multi-ABI APKs to GitHub Releases when a version tag is pushed.
+
+### Required GitHub Secrets
+
+Configure the following secrets in your repository (**Settings → Secrets and variables → Actions**):
+
+| Secret | Description |
+|--------|-------------|
+| `KEYSTORE` | Base64-encoded keystore file. Generate with: `base64 -w 0 your-keystore.jks` |
+| `SIGNING_STORE_PASSWORD` | Keystore password |
+| `SIGNING_KEY_ALIAS` | Key alias inside the keystore |
+| `SIGNING_KEY_PASSWORD` | Key password |
+
+### Creating a Release
+
+Push a version tag to trigger the workflow:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+The workflow will build APKs for `arm64-v8a`, `armeabi-v7a`, `x86`, and `x86_64`, then create a GitHub Release with all four APKs attached.
+
 ## Progress
 | function     | Android | iOS | macOS | Windows | Linux |
 |--------------|---------|-----|-------|---------|------|

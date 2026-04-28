@@ -1,0 +1,88 @@
+name: Build and release app
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*'
+
+jobs:
+  build:
+    name: Build, sign app
+    runs-on: ubuntu-latest
+    outputs:
+      tag-name: ${{ steps.get-tag.outputs.tag-name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get tag name
+        id: get-tag
+        run: echo "tag-name=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+          cache: "gradle"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 9862592
+
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.KEYSTORE }}
+          SIGNING_KEY_STORE_PATH: keystore.jks
+        run: |
+          echo $ENCODED_STRING > keystore-b64.txt
+          base64 -d keystore-b64.txt > $SIGNING_KEY_STORE_PATH
+
+      - name: Build APK
+        run: ./gradlew :composeApp:assembleRelease
+        env:
+          SIGNING_KEY_STORE_PATH: keystore.jks
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-release
+          path: composeApp/build/outputs/apk/release/composeApp-*-release.apk
+
+  create-release:
+    needs: build
+    runs-on: ubuntu-22.04
+    name: Release app
+    permissions:
+      contents: write
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: apk-release
+          path: ./apk
+
+      - name: Rename APKs
+        run: |
+          cd ./apk
+          mv composeApp-arm64-v8a-release.apk     FeedUs-${{ needs.build.outputs.tag-name }}-arm64-v8a.apk
+          mv composeApp-armeabi-v7a-release.apk   FeedUs-${{ needs.build.outputs.tag-name }}-armeabi-v7a.apk
+          mv composeApp-x86-release.apk           FeedUs-${{ needs.build.outputs.tag-name }}-x86.apk
+          mv composeApp-x86_64-release.apk        FeedUs-${{ needs.build.outputs.tag-name }}-x86_64.apk
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create ${{ needs.build.outputs.tag-name }} \
+            ./apk/FeedUs-${{ needs.build.outputs.tag-name }}-arm64-v8a.apk \
+            ./apk/FeedUs-${{ needs.build.outputs.tag-name }}-x86_64.apk \
+            ./apk/FeedUs-${{ needs.build.outputs.tag-name }}-armeabi-v7a.apk \
+            ./apk/FeedUs-${{ needs.build.outputs.tag-name }}-x86.apk \
+            --repo ${{ github.repository }} \
+            --title "${{ needs.build.outputs.tag-name }}" \
+            --generate-notes
