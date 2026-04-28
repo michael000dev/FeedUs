@@ -11,7 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -75,13 +76,19 @@ fun ArticlesScreenComposable(
             }
         }
     }
-    Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .statusBarsPadding()
+    ) {
         AppBar(state, navBack, markAllRead)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
                 .background(color = MaterialTheme.colorScheme.background)
+                .navigationBarsPadding()
                 .padding(vertical = 4.dp)
         ) {
             if (state.items.isNotEmpty()) {
