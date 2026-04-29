@@ -11,8 +11,8 @@ plugins {
     alias(libs.plugins.sqldelight)
 }
 
-val mobileVersionCode = 3
-val mobileAppVersion = "0.2.1"
+val mobileVersionCode = 4
+val mobileAppVersion = "0.2.2"
 val desktopAppVersion = "1.0.0"
 
 kotlin {
