@@ -1,5 +1,7 @@
 package com.seazon.feedus
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.NavHostController
@@ -29,6 +31,10 @@ fun App() {
     NavHost(
         navController = navController,
         startDestination = Screen.Feeds.name,
+        enterTransition = { slideInHorizontally { it } },
+        exitTransition = { slideOutHorizontally { -it } },
+        popEnterTransition = { slideInHorizontally { -it } },
+        popExitTransition = { slideOutHorizontally { it } },
     ) {
         composable(route = Screen.Login.name) {
             LoginScreen(
