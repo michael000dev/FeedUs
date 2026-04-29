@@ -71,6 +71,11 @@
 
     <string name="articles_title">Articles</string>
 
+    <string name="article_detail_title">Article</string>
+    <string name="article_open_in_browser">Open in browser</string>
+    <string name="article_star">Star</string>
+    <string name="article_unstar">Unstar</string>
+
     <string name="demo_title">Demo</string>
     <string name="ai_title">AI Demo</string>
     <string name="ai_type">Type</string>

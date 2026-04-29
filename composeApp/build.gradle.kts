@@ -84,6 +84,7 @@ kotlin {
             implementation(libs.coil)
             implementation(libs.coil.network.ktor3)
             implementation(libs.sonner)
+            implementation(libs.ksoup.html)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

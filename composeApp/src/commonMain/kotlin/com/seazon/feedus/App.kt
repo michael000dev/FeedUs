@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.seazon.feedme.lib.rss.bo.Item
+import com.seazon.feedus.ui.article.ArticleDetailScreen
 import com.seazon.feedus.ui.articles.ArticlesScreen
 import com.seazon.feedus.ui.demo.DemoScreen
 import com.seazon.feedus.ui.demo.AIScreen
@@ -17,6 +19,7 @@ object A {
     var feedId: String? = null
     var starred: Boolean = false
     var labelId: String? = null
+    var currentItem: Item? = null
 }
 
 @Composable
@@ -67,8 +70,17 @@ fun App() {
                     navController.popBackStack()
                 },
                 navToArticle = {
-                    uriHandler.openUri(it.link.orEmpty())
+                    A.currentItem = it
+                    navController.navigate(Screen.ArticleDetail.name)
                 }
+            )
+        }
+        composable(route = Screen.ArticleDetail.name) {
+            ArticleDetailScreen(
+                item = A.currentItem,
+                navBack = {
+                    navController.popBackStack()
+                },
             )
         }
         composable(route = Screen.Demo.name) {

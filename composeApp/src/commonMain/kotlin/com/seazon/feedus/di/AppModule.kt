@@ -5,6 +5,7 @@ import com.seazon.feedus.platform.DatabaseDriverFactory
 import com.seazon.feedus.data.AppSettings
 import com.seazon.feedus.data.RssSDK
 import com.seazon.feedus.data.TokenSettings
+import com.seazon.feedus.ui.article.ArticleDetailViewModel
 import com.seazon.feedus.ui.articles.ArticlesViewModel
 import com.seazon.feedus.ui.demo.AIViewModel
 import com.seazon.feedus.ui.feeds.FeedsViewModel
@@ -26,6 +27,7 @@ val appModule = module {
     single { AIViewModel() }
     single { FeedsViewModel(rssSDK = get(), tokenSettings = get(), rssDatabase = get(), appSettings = get()) }
     viewModel { ArticlesViewModel(rssSDK = get(), tokenSettings = get(), rssDatabase = get()) }
+    viewModel { ArticleDetailViewModel(rssSDK = get(), rssDatabase = get()) }
 }
 
 expect val platformModule: Module
