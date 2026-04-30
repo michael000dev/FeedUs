@@ -137,20 +137,6 @@ fun ArticleDetailScreenComposable(
                     .verticalScroll(rememberScrollState())
                     .navigationBarsPadding()
             ) {
-                // Hero image
-                val visual = item.visual
-                if (!visual.isNullOrEmpty() && HtmlUtils.isHttpUrl(visual)) {
-                    AsyncImage(
-                        model = visual,
-                        contentDescription = null,
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(220.dp)
-                            .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)),
-                    )
-                }
-
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Spacer(modifier = Modifier.height(16.dp))
 
