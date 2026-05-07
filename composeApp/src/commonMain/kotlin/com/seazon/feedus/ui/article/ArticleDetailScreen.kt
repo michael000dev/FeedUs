@@ -12,6 +12,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ArticleDetailScreen(
     item: Item?,
     navBack: () -> Unit,
+    navToTranslationSettings: () -> Unit,
 ) {
     val viewModel = koinViewModel<ArticleDetailViewModel>()
     val toaster = rememberToasterState()
@@ -20,7 +21,18 @@ fun ArticleDetailScreen(
     LaunchedEffect(viewModel.eventFlow) {
         viewModel.eventFlow.collect {
             when (it) {
-                is ArticleDetailEvent.GeneralErrorEvent -> toaster.show(it.message)
+                is ArticleDetailEvent.GeneralErrorEvent -> {
+                    toaster.show(it.message)
+                    viewModel.consumeEvent()
+                }
+                is ArticleDetailEvent.TranslationErrorEvent -> {
+                    toaster.show(it.message)
+                    viewModel.consumeEvent()
+                }
+                is ArticleDetailEvent.NavigateToTranslationSettings -> {
+                    viewModel.consumeEvent()
+                    navToTranslationSettings()
+                }
                 else -> {}
             }
         }
@@ -40,5 +52,6 @@ fun ArticleDetailScreen(
         onLinkClick = { url ->
             if (url.isNotEmpty()) uriHandler.openUri(url)
         },
+        onTranslate = { viewModel.translate() },
     )
 }

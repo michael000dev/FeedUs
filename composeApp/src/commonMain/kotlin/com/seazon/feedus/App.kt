@@ -15,6 +15,7 @@ import com.seazon.feedus.ui.demo.DemoScreen
 import com.seazon.feedus.ui.demo.AIScreen
 import com.seazon.feedus.ui.feeds.FeedsScreen
 import com.seazon.feedus.ui.login.LoginScreen
+import com.seazon.feedus.ui.settings.TranslationSettingsScreen
 
 object A {
     var categoryId: String? = null
@@ -87,6 +88,9 @@ fun App() {
                 navBack = {
                     navController.popBackStack()
                 },
+                navToTranslationSettings = {
+                    navController.navigate(Screen.TranslationSettings.name)
+                },
             )
         }
         composable(route = Screen.Demo.name) {
@@ -101,6 +105,13 @@ fun App() {
         }
         composable(route = Screen.AI.name) {
             AIScreen()
+        }
+        composable(route = Screen.TranslationSettings.name) {
+            TranslationSettingsScreen(
+                navBack = {
+                    navController.popBackStack()
+                },
+            )
         }
     }
 }

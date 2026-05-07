@@ -8,4 +8,8 @@ data class ArticleDetailScreenState(
     val item: Item? = null,
     val feed: Feed? = null,
     val contentBlocks: List<ContentBlock> = emptyList(),
+    val isTranslating: Boolean = false,
+    val translatedTitle: String? = null,
+    val translatedBlocks: List<ContentBlock>? = null,
+    val showTranslation: Boolean = false,
 )

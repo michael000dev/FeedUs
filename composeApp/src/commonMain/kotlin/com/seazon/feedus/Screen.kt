@@ -10,4 +10,5 @@ enum class Screen(val title: StringResource) {
     ArticleDetail(title = Res.string.article_detail_title),
     Demo(title = Res.string.demo_title),
     AI(title = Res.string.ai_title),
+    TranslationSettings(title = Res.string.translation_settings_title),
 }

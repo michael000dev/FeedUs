@@ -11,6 +11,7 @@ class AppSettings {
             appPreferences = AppPreferences(
                 unreadMax = settings.getInt("unreadMax", 0),
                 starredCount = settings.getInt("starredCount", 0),
+                translationModelName = settings.getString("translationModelName", ""),
             )
         }
         return appPreferences!!
@@ -21,6 +22,7 @@ class AppSettings {
         this.appPreferences = appPreferences
         settings.putInt("unreadMax", appPreferences.unreadMax)
         settings.putInt("starredCount", appPreferences.starredCount)
+        settings.putString("translationModelName", appPreferences.translationModelName)
     }
 
     fun clear() {
@@ -32,4 +34,5 @@ class AppSettings {
 data class AppPreferences(
     val unreadMax: Int,
     val starredCount: Int,
+    val translationModelName: String = "",
 )

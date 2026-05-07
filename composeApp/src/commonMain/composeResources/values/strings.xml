@@ -76,6 +76,16 @@
     <string name="article_star">Star</string>
     <string name="article_unstar">Unstar</string>
 
+    <string name="article_translate">Translate</string>
+    <string name="article_translated">Translated</string>
+    <string name="article_show_original">Show Original</string>
+    <string name="article_translating">Translating…</string>
+    <string name="translation_settings_title">Translation Settings</string>
+    <string name="translation_model">AI Model</string>
+    <string name="translation_no_model_hint">No model selected. Please configure a model in Translation Settings.</string>
+    <string name="translation_not_supported">Translation requires AiModelHub app installed on Android 12+.</string>
+    <string name="translation_go_to_settings">Go to Settings</string>
+
     <string name="demo_title">Demo</string>
     <string name="ai_title">AI Demo</string>
     <string name="ai_type">Type</string>

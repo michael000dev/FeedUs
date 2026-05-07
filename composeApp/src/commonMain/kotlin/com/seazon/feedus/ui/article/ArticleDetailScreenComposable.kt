@@ -16,11 +16,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.OpenInBrowser
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +40,11 @@ import com.seazon.feedus.DateUtil
 import com.seazon.feedus.ui.customize.LoadingView
 import feedus.composeapp.generated.resources.Res
 import feedus.composeapp.generated.resources.article_open_in_browser
+import feedus.composeapp.generated.resources.article_show_original
 import feedus.composeapp.generated.resources.article_star
+import feedus.composeapp.generated.resources.article_translate
+import feedus.composeapp.generated.resources.article_translated
+import feedus.composeapp.generated.resources.article_translating
 import feedus.composeapp.generated.resources.article_unstar
 import feedus.composeapp.generated.resources.ic_vec_star_fill
 import feedus.composeapp.generated.resources.ic_vec_star_outline
@@ -54,6 +60,7 @@ fun ArticleDetailScreenComposable(
     onToggleStar: () -> Unit,
     onOpenInBrowser: () -> Unit,
     onLinkClick: (String) -> Unit,
+    onTranslate: () -> Unit,
 ) {
     val state by stateFlow.collectAsState()
     val item = state.item
@@ -88,6 +95,35 @@ fun ArticleDetailScreenComposable(
             elevation = 0.dp,
             actions = {
                 if (item != null) {
+                    // Translate button
+                    if (state.isTranslating) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(top = 8.dp, end = 8.dp)
+                                .width(24.dp)
+                                .height(24.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    } else {
+                        IconButton(
+                            onClick = onTranslate,
+                            modifier = Modifier.padding(top = 8.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Translate,
+                                contentDescription = if (state.showTranslation)
+                                    stringResource(Res.string.article_show_original)
+                                else
+                                    stringResource(Res.string.article_translate),
+                                tint = if (state.showTranslation)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onPrimaryContainer,
+                            )
+                        }
+                    }
+
                     val isStarred = item.star == Item.STAR_STARRED
                     IconButton(
                         onClick = onToggleStar,
@@ -140,9 +176,13 @@ fun ArticleDetailScreenComposable(
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Title
+                    // Title (original or translated)
+                    val displayTitle = if (state.showTranslation && state.translatedTitle != null)
+                        state.translatedTitle!!
+                    else
+                        item.title.orEmpty()
                     Text(
-                        text = item.title.orEmpty(),
+                        text = displayTitle,
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -174,10 +214,24 @@ fun ArticleDetailScreenComposable(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
+                    // Translation label
+                    if (state.showTranslation) {
+                        Text(
+                            text = stringResource(Res.string.article_translated),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
                     // Article body
-                    if (state.contentBlocks.isNotEmpty()) {
+                    val blocksToShow = if (state.showTranslation && state.translatedBlocks != null)
+                        state.translatedBlocks!!
+                    else
+                        state.contentBlocks
+                    if (blocksToShow.isNotEmpty()) {
                         ArticleBody(
-                            blocks = state.contentBlocks,
+                            blocks = blocksToShow,
                             onLinkClick = onLinkClick,
                             modifier = Modifier.fillMaxWidth(),
                         )
