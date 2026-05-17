@@ -192,10 +192,12 @@ class FoloApi : RssApi {
         title: String,
         feedId: String?,
         feedUrl: String?,
-        categories: Array<String>
-    ): Boolean {
-        val response = mainApi?.subscribeFeed(title, feedUrl.orEmpty(), categories.firstOrNull { !it.isNullOrEmpty() })
-        return response?.feed != null
+        categories: Array<String>,
+        view: Int,
+    ): String? {
+        val response =
+            mainApi?.subscribeFeed(title, feedUrl.orEmpty(), categories.firstOrNull { !it.isNullOrEmpty() }, view)
+        return response?.feed?.id
     }
 
     override suspend fun unsubscribeFeed(feedId: String): String? {
@@ -206,9 +208,10 @@ class FoloApi : RssApi {
         title: String,
         feedId: String,
         aCategories: Array<String>,
-        rCategories: Array<String>
+        rCategories: Array<String>,
+        view: Int,
     ): String? {
-        return null
+        return mainApi?.editFeed(title, feedId, aCategories.firstOrNull(), view)
     }
 
     /*
