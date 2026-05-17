@@ -103,21 +103,31 @@ fun TranslationSettingsScreenComposable(
                         modifier = Modifier
                             .fillMaxWidth()
                             .selectable(
-                                selected = state.selectedModel == model,
-                                onClick = { onSelectModel(model) },
+                                selected = state.selectedModelId == model.modelId,
+                                onClick = { onSelectModel(model.modelId) },
                                 role = Role.RadioButton,
                             )
                             .padding(vertical = 4.dp),
                     ) {
                         RadioButton(
-                            selected = state.selectedModel == model,
+                            selected = state.selectedModelId == model.modelId,
                             onClick = null,
                         )
-                        Text(
-                            text = model,
-                            style = MaterialTheme.typography.bodyLarge,
+                        Column(
                             modifier = Modifier.padding(start = 8.dp),
-                        )
+                        ) {
+                            Text(
+                                text = model.displayName.ifEmpty { model.name },
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                            if (model.description.isNotEmpty()) {
+                                Text(
+                                    text = model.description,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -127,7 +137,7 @@ fun TranslationSettingsScreenComposable(
             Button(
                 onClick = onSave,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = state.selectedModel.isNotEmpty(),
+                enabled = state.selectedModelId.isNotEmpty(),
             ) {
                 Text(stringResource(Res.string.common_save))
             }

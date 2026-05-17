@@ -1,14 +1,27 @@
 package com.seazon.feedus.translation
 
 import android.os.Build
-import com.ai_model_hub.sdk.ModelAllowlist
+import com.ai_model_hub.sdk.AiHubClient
 
 actual class TranslationHelper actual constructor() {
 
-    actual fun getAvailableModels(): List<String> =
-        ModelAllowlist.models.map { it.name }
+    private val client = AiHubClient()
 
-    actual suspend fun translate(text: String, targetLanguage: String, modelName: String): String {
+    init {
+        client.connect()
+    }
+
+    actual fun getAvailableModels(): List<ModelInfo> =
+        client.getAvailableModels().map {
+            ModelInfo(
+                modelId = it.modelId,
+                name = it.name,
+                displayName = it.displayName,
+                description = it.description,
+            )
+        }
+
+    actual suspend fun translate(text: String, targetLanguage: String, modelId: String): String {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             throw TranslationNotSupportedException(
                 "Translation requires Android 12 (API 31) or higher."
@@ -16,7 +29,7 @@ actual class TranslationHelper actual constructor() {
         }
         return try {
             com.ai_model_hub.sdk.functional.translate(
-                modelName = modelName,
+                modelId = modelId,
                 text = text,
                 targetLanguage = targetLanguage,
                 sourceLanguage = "",

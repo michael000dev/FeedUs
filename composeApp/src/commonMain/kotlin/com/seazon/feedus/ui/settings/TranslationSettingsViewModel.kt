@@ -16,23 +16,23 @@ class TranslationSettingsViewModel(
     val state: StateFlow<TranslationSettingsScreenState> = _state
 
     init {
-        val savedModel = appSettings.getAppPreferences().translationModelName
+        val savedModelId = appSettings.getAppPreferences().translationModelId
         val models = translationHelper.getAvailableModels()
         _state.update {
             it.copy(
                 availableModels = models,
-                selectedModel = if (savedModel.isNotEmpty()) savedModel else models.firstOrNull().orEmpty(),
+                selectedModelId = savedModelId.ifEmpty { models.firstOrNull()?.modelId.orEmpty() },
             )
         }
     }
 
-    fun selectModel(modelName: String) {
-        _state.update { it.copy(selectedModel = modelName) }
+    fun selectModel(modelId: String) {
+        _state.update { it.copy(selectedModelId = modelId) }
     }
 
     fun save() {
         val prefs = appSettings.getAppPreferences()
-        appSettings.saveAppPreferences(prefs.copy(translationModelName = _state.value.selectedModel))
+        appSettings.saveAppPreferences(prefs.copy(translationModelId = _state.value.selectedModelId))
         _state.update { it.copy(isSaved = true) }
     }
 }

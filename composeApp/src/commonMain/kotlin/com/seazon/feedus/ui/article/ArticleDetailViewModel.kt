@@ -76,10 +76,14 @@ class ArticleDetailViewModel(
         _eventFlow.value = null
     }
 
+    fun toTranslationSettings() {
+        _eventFlow.value = ArticleDetailEvent.NavigateToTranslationSettings
+    }
+
     fun translate() {
-        val modelName = appSettings.getAppPreferences().translationModelName
-        if (modelName.isBlank()) {
-            _eventFlow.value = ArticleDetailEvent.NavigateToTranslationSettings
+        val modelId = appSettings.getAppPreferences().translationModelId
+        if (modelId.isBlank()) {
+            toTranslationSettings()
             return
         }
 
@@ -99,26 +103,26 @@ class ArticleDetailViewModel(
 
                 val translatedTitle = process {
                     if (titleToTranslate.isNotBlank())
-                        translationHelper.translate(titleToTranslate, targetLanguage, modelName)
+                        translationHelper.translate(titleToTranslate, targetLanguage, modelId)
                     else ""
                 }
 
                 val translatedBlocks = _state.value.contentBlocks.map { block ->
                     when (block) {
                         is ContentBlock.Heading -> {
-                            val t = process { translationHelper.translate(block.text, targetLanguage, modelName) }
+                            val t = process { translationHelper.translate(block.text, targetLanguage, modelId) }
                             block.copy(text = t)
                         }
                         is ContentBlock.Paragraph -> {
-                            val t = process { translationHelper.translate(block.text.text, targetLanguage, modelName) }
+                            val t = process { translationHelper.translate(block.text.text, targetLanguage, modelId) }
                             block.copy(text = AnnotatedString(t))
                         }
                         is ContentBlock.Quote -> {
-                            val t = process { translationHelper.translate(block.text.text, targetLanguage, modelName) }
+                            val t = process { translationHelper.translate(block.text.text, targetLanguage, modelId) }
                             block.copy(text = AnnotatedString(t))
                         }
                         is ContentBlock.ListItemBlock -> {
-                            val t = process { translationHelper.translate(block.text.text, targetLanguage, modelName) }
+                            val t = process { translationHelper.translate(block.text.text, targetLanguage, modelId) }
                             block.copy(text = AnnotatedString(t))
                         }
                         // Images, code blocks and dividers are kept as-is

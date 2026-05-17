@@ -6,17 +6,17 @@ package com.seazon.feedus.translation
  */
 expect class TranslationHelper() {
 
-    /** Returns the list of available model names from AiModelHub. */
-    fun getAvailableModels(): List<String>
+    /** Returns the list of available models from AiModelHub. */
+    fun getAvailableModels(): List<ModelInfo>
 
     /**
-     * Translates [text] from [sourceLanguage] to [targetLanguage] using the specified [modelName].
+     * Translates [text] from [sourceLanguage] to [targetLanguage] using the specified [modelId].
      * Both language parameters are full English names (e.g. "Chinese", "English").
      *
      * @throws TranslationNotSupportedException on platforms where translation is unavailable.
      * @throws TranslationException on all other translation errors.
      */
-    suspend fun translate(text: String, targetLanguage: String, modelName: String): String
+    suspend fun translate(text: String, targetLanguage: String, modelId: String): String
 }
 
 class TranslationNotSupportedException(message: String) : Exception(message)

@@ -53,5 +53,6 @@ fun ArticleDetailScreen(
             if (url.isNotEmpty()) uriHandler.openUri(url)
         },
         onTranslate = { viewModel.translate() },
+        onToTranslationSettings = viewModel::toTranslationSettings,
     )
 }

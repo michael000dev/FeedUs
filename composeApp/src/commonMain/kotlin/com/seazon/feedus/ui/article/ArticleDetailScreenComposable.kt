@@ -1,6 +1,7 @@
 package com.seazon.feedus.ui.article
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,10 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
@@ -29,12 +31,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import com.seazon.feedme.lib.utils.HtmlUtils
+import com.seazon.feedme.lib.rss.bo.Item
 import com.seazon.feedme.lib.utils.orZero
 import com.seazon.feedus.DateUtil
 import com.seazon.feedus.ui.customize.LoadingView
@@ -44,11 +46,9 @@ import feedus.composeapp.generated.resources.article_show_original
 import feedus.composeapp.generated.resources.article_star
 import feedus.composeapp.generated.resources.article_translate
 import feedus.composeapp.generated.resources.article_translated
-import feedus.composeapp.generated.resources.article_translating
 import feedus.composeapp.generated.resources.article_unstar
 import feedus.composeapp.generated.resources.ic_vec_star_fill
 import feedus.composeapp.generated.resources.ic_vec_star_outline
-import com.seazon.feedme.lib.rss.bo.Item
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -61,6 +61,7 @@ fun ArticleDetailScreenComposable(
     onOpenInBrowser: () -> Unit,
     onLinkClick: (String) -> Unit,
     onTranslate: () -> Unit,
+    onToTranslationSettings: () -> Unit,
 ) {
     val state by stateFlow.collectAsState()
     val item = state.item
@@ -99,16 +100,19 @@ fun ArticleDetailScreenComposable(
                     if (state.isTranslating) {
                         CircularProgressIndicator(
                             modifier = Modifier
-                                .padding(top = 8.dp, end = 8.dp)
                                 .width(24.dp)
                                 .height(24.dp),
                             strokeWidth = 2.dp,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     } else {
-                        IconButton(
-                            onClick = onTranslate,
-                            modifier = Modifier.padding(top = 8.dp),
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.size(40.dp).clip(CircleShape).combinedClickable(
+                                onClick = onTranslate,
+                                onLongClick = onToTranslationSettings,
+                                role = Role.Button,
+                            ),
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Translate,
@@ -127,7 +131,7 @@ fun ArticleDetailScreenComposable(
                     val isStarred = item.star == Item.STAR_STARRED
                     IconButton(
                         onClick = onToggleStar,
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier,
                     ) {
                         Icon(
                             painter = painterResource(
@@ -144,7 +148,7 @@ fun ArticleDetailScreenComposable(
                 }
                 IconButton(
                     onClick = onOpenInBrowser,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier,
                 ) {
                     Icon(
                         imageVector = Icons.Default.OpenInBrowser,
